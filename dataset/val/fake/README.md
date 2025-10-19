@@ -1,0 +1,1 @@
+This folder should contain fake images for training the model
