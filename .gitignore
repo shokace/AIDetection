@@ -1,23 +1,24 @@
-# Python stuff
+# Ignore everything inside dataset
+dataset/**
+!dataset/**/
+!dataset/**/README
+!dataset/**/README.md
+
 __pycache__/
 *.pyc
-
-# Environment
 env/
 venv/
 *.egg-info/
 
-# Model weights
-model/*.pt
+model/
+*.pt
 
-# Ignore everything inside dataset, but keep structure
-dataset/*
-!dataset/.gitkeep
-!dataset/train/
-!dataset/val/
+repos/
 
-# Jupyter junk (if you use it later)
 .ipynb_checkpoints/
-
-# OS junk
 .DS_Store
+Thumbs.db
+
+!.gitignore
+!README
+!README.md
