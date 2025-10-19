@@ -16,7 +16,8 @@ model/
 repos/
 test_images/
 
-.ipynb_checkpoints/
+.ipynb_checkpoints
+/
 .DS_Store
 Thumbs.db
 

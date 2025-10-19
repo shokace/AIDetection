@@ -3,10 +3,10 @@ import os
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from torchvision import datasets, models, transforms
 from torch.utils.data import DataLoader
+from torchvision import datasets, models
+from torchvision.models import resnet50, ResNet50_Weights
 from tqdm import tqdm
-
 from pipeline.preprocessing.transforms import get_transforms
 from config import TRAIN_DIR, VAL_DIR
 
@@ -15,24 +15,8 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 os.makedirs("model", exist_ok=True)
 
 batch_size = 32
-num_epochs = 5
+num_epochs = 4
 num_classes = 2
-
-data_transforms = {
-    'train': transforms.Compose([
-        transforms.Resize((224, 224)),
-        transforms.RandomHorizontalFlip(),
-        transforms.ToTensor(),
-        transforms.Normalize([0.485, 0.456, 0.406],
-                             [0.229, 0.224, 0.225])
-    ]),
-    'val': transforms.Compose([
-        transforms.Resize((224, 224)),
-        transforms.ToTensor(),
-        transforms.Normalize([0.485, 0.456, 0.406],
-                             [0.229, 0.224, 0.225])
-    ]),
-}
 
 train_transform = get_transforms(train=True)
 val_transform = get_transforms(train=False)
@@ -54,7 +38,7 @@ dataloaders = {
 }
 
 # Load ResNet-50
-model = models.resnet50(pretrained=True)
+model = resnet50(weights=ResNet50_Weights.IMAGENET1K_V1)
 for param in model.parameters():
     param.requires_grad = False  # Freeze base layers
 
