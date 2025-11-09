@@ -4,16 +4,44 @@ from torchvision import transforms
 def get_transforms(train=True):
     if train:
         return transforms.Compose([
-            transforms.Resize(256),
-            transforms.RandomResizedCrop(224),
-            transforms.RandomHorizontalFlip(),
+            transforms.Resize((256, 256)),
+
+            # --- Geometric augmentations ---
+            transforms.RandomResizedCrop(224, scale=(0.8, 1.0), ratio=(0.9, 1.1)),
+            transforms.RandomHorizontalFlip(p=0.5),
+            transforms.RandomRotation(degrees=5),
+
+            # --- Photometric augmentations ---
+            transforms.ColorJitter(
+                brightness=0.15,
+                contrast=0.15,
+                saturation=0.15,
+                hue=0.02
+            ),
+            transforms.RandomApply([
+                transforms.GaussianBlur(kernel_size=(3, 3), sigma=(0.1, 1.5))
+            ], p=0.2),
+            transforms.RandomApply([
+                transforms.RandomAdjustSharpness(sharpness_factor=1.5)
+            ], p=0.2),
+
+            # --- Conversion to tensor ---
             transforms.ToTensor(),
+
+            # --- Optional "real-world" degradation ---
+            transforms.RandomApply([
+                transforms.Lambda(lambda x: (x + 0.02 * torch.randn_like(x)).clamp(0, 1))
+            ], p=0.1),
+
+            # --- Normalization (standard ImageNet) ---
             transforms.Normalize(
                 mean=[0.485, 0.456, 0.406],
                 std=[0.229, 0.224, 0.225]
-            )
+            ),
         ])
+
     else:
+        # Validation: deterministic, no augmentation
         return transforms.Compose([
             transforms.Resize(256),
             transforms.CenterCrop(224),
@@ -21,5 +49,5 @@ def get_transforms(train=True):
             transforms.Normalize(
                 mean=[0.485, 0.456, 0.406],
                 std=[0.229, 0.224, 0.225]
-            )
+            ),
         ])
